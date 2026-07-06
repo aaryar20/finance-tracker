@@ -162,9 +162,9 @@ The application helps users manage income, expenses, monthly budgets, savings go
 
 
 
+
+---
 # 🛠 Tech Stack
-
-
 
 | Technology | Usage |
 
@@ -183,7 +183,6 @@ The application helps users manage income, expenses, monthly budgets, savings go
 | OpenPyXL | Excel Export |
 
 | ReportLab | PDF Export |
-
 
 
 ---
