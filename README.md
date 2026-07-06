@@ -1,111 +1,201 @@
+![Python](https://img.shields.io/badge/Python-3.13-blue)
+
+
+
+![Streamlit](https://img.shields.io/badge/Streamlit-1.58-red)
+
+
+
+![SQLite](https://img.shields.io/badge/SQLite-Database-green)
+
+
+
+![License](https://img.shields.io/badge/License-MIT-yellow)
+
 # 💰 Smart Personal Finance Tracker
 
-A secure multi-user personal finance management application built using **Python**, **Streamlit**, and **SQLite**.
 
-The application helps users track income and expenses, manage monthly budgets, monitor savings goals, generate financial reports, and export data to PDF and Excel.
+
+## 🚀 Live Demo
+
+
+👉 https://finance-tracker-38jza6hwezdewwagwrzcaz.streamlit.app/
+
+
+A modern **Personal Finance Management System** built with **Python**, **Streamlit**, **SQLite**, and **Plotly**.
+
+
+The application helps users manage income, expenses, monthly budgets, savings goals, and financial analytics through an intuitive dashboard.
 
 ---
 
-# 🚀 Live Demo
 
-
-https://finance-tracker-38jza6hwezdewwagwrzcaz.streamlit.app/
-
----
 
 # ✨ Features
 
-## 🔐 Authentication
 
-- User Registration
-- Secure Login
-- Password Hashing
-- Session Management
 
----
+## 💰 Transaction Management
 
-## 💳 Transaction Management
 
-- Add Transactions
+
+- Add Income & Expenses
+
 - Edit Transactions
+
 - Delete Transactions
+
 - Transaction History
-- Search
-- Filters
+
+- Search Transactions
+
+- Filter by Category
+
+- Filter by Transaction Type
+
+- Date Range Filter
+
+
 
 ---
+
+
 
 ## 📊 Dashboard
 
+
+- Financial Overview
+
 - Income Summary
+
 - Expense Summary
-- Balance
-- Expense Trend Chart
-- Expense Breakdown
-- Financial Insights
+
+- Current Balance
+
+- Expense Trend
+
+- Expense Distribution
+
+- Monthly Analytics
+
+- Recent Transactions
+
+- Budget Progress
+
+- Smart Insights
+
+
 
 ---
 
-## 💰 Budget Manager
 
-- Monthly Budget
-- Budget Progress
+
+## 💵 Budget Manager
+
+
+- Set Monthly Budget
+
+- Budget Progress Bar
+
 - Remaining Budget
+
 - Budget Alerts
 
+- Budget Analytics
+
+
 ---
+
 
 ## 🎯 Savings Goals
 
-- Create Goals
-- Progress Tracking
+
+- Create Savings Goal
+
+- Track Progress
+
 - Remaining Amount
-- Goal Completion
+
+- Goal Completion Percentage
+
+
 
 ---
 
-## 🏷 Categories
 
-- Custom Categories
-- User-specific Categories
-- Category Management
-
----
 
 ## 📈 Reports
 
-- Filter by Type
-- Filter by Category
-- Filter by Month
+
+
+- Expense Reports
+
+- Monthly Reports
+
+- Financial Summary
+
+- CSV Export
+
 - Excel Export
-- PDF Export
+
+- PDF Export *(Coming Soon)*
+
+
 
 ---
 
-## ⚙ Settings
 
-- View Profile
-- Update Name
-- Change Password
+
+## 🏷 Category Management
+
+
+
+- Dynamic Categories
+
+- Add Categories
+
+- Delete Categories
+
+
 
 ---
+
+
 
 # 🛠 Tech Stack
 
-- Python
-- Streamlit
-- SQLite
-- Pandas
-- Plotly
-- OpenPyXL
-- ReportLab
-- bcrypt
+
+
+| Technology | Usage |
+
+|------------|------|
+
+| Python | Backend |
+
+| Streamlit | Web Framework |
+
+| SQLite | Database |
+
+| Pandas | Data Processing |
+
+| Plotly | Charts |
+
+| OpenPyXL | Excel Export |
+
+| ReportLab | PDF Export |
+
+
 
 ---
 
-# 📂 Project Structure
+
+
+# 📁 Project Structure
+
+
 
 ```
+
 Finance-Tracker/
 │
 ├── app.py
@@ -119,51 +209,11 @@ Finance-Tracker/
 └── assets/
 ```
 
----
 
-## Login
-
-![Login](assets/login.png)
 
 ---
 
-## Dashboard
 
-![Dashboard](assets/dashboard.png)
-
----
-
-## Add Transaction
-
-![Add Transaction](assets/add_transaction.png)
-
----
-
-## Budget Manager
-
-![Budget](assets/budget.png)
-
----
-
-## Savings Goals
-
-![Savings](assets/goals.png)
-
----
-
-## Reports
-
-![Reports](assets/reports.png)
-
----
-
-## Settings
-
-![Settings](assets/settings.png)
-
----
-
-# ⚡ Installation
 
 Clone the repository
 
@@ -228,3 +278,32 @@ streamlit run app.py
 
 GitHub:
 https://github.com/aaryar20
+
+Electronics & Telecommunication Engineering Student
+
+
+
+Interested in:
+
+
+
+- Software Development
+
+- Full Stack Development
+
+- AI Applications
+
+- Data Analytics
+
+
+
+---
+
+
+
+# 📜 License
+
+
+
+This project is licensed under the MIT License.
+
