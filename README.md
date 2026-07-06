@@ -8,11 +8,8 @@ The application helps users track income and expenses, manage monthly budgets, m
 
 # 🚀 Live Demo
 
-> Add your deployed Streamlit URL here
 
-Example:
-
-https://your-app.streamlit.app
+https://finance-tracker-38jza6hwezdewwagwrzcaz.streamlit.app/
 
 ---
 
@@ -123,8 +120,6 @@ Finance-Tracker/
 ```
 
 ---
-
-# 📸 Screenshots
 
 ## Login
 
