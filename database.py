@@ -110,22 +110,14 @@ def initialize_database():
     # ---------------- Categories ----------------
 
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS categories(
-
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-        user_id INTEGER NOT NULL,
-
-        name TEXT NOT NULL,
-
-        UNIQUE(user_id,name),
-
-        FOREIGN KEY(user_id)
-            REFERENCES users(id)
-            ON DELETE CASCADE
-
-    )
-    """)
+                   CREATE TABLE IF NOT EXISTS categories(
+                   id INTEGER PRIMARY KEY AUTOINCREMENT,
+                   user_id INTEGER NOT NULL,
+                   name TEXT NOT NULL,
+                   UNIQUE(user_id, name),
+                   FOREIGN KEY(user_id) REFERENCES users(id)
+                   )
+                   """)
 
     conn.commit()
 

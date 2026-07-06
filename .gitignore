@@ -1,7 +1,19 @@
+# Virtual Environment
 venv/
+
+# Python cache
 __pycache__/
 *.pyc
-.env
-.DS_Store
+
+# SQLite Database
 database/expenses.db
-.streamlit/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Streamlit cache
+.streamlit/secrets.toml

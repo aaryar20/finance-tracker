@@ -1,46 +1,16 @@
 import sqlite3
 import pandas as pd
 
+from config import DB_NAME
 from database import get_connection
-from components.auth import (
-    hash_password,
-    verify_password
-)
+from components.auth import hash_password, verify_password
+
+
+
 
 # ---------------------------------------
-# Authentication
+# Register User
 # ---------------------------------------
-
-def create_default_categories(user_id):
-
-    default_categories = [
-        "Food",
-        "Transport",
-        "Shopping",
-        "Entertainment",
-        "Bills",
-        "Healthcare",
-        "Education",
-        "Salary",
-        "Freelance",
-        "Investment",
-        "Other"
-    ]
-
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.executemany(
-        """
-        INSERT OR IGNORE INTO categories(user_id, name)
-        VALUES (?, ?)
-        """,
-        [(user_id, category) for category in default_categories]
-    )
-
-    conn.commit()
-    conn.close()
-
 
 def register_user(name, email, password):
 
@@ -52,7 +22,7 @@ def register_user(name, email, password):
         cursor.execute(
             """
             INSERT INTO users(name, email, password)
-            VALUES (?, ?, ?)
+            VALUES(?,?,?)
             """,
             (
                 name.strip(),
@@ -64,6 +34,7 @@ def register_user(name, email, password):
         user_id = cursor.lastrowid
 
         conn.commit()
+
         conn.close()
 
         create_default_categories(user_id)
@@ -75,16 +46,19 @@ def register_user(name, email, password):
         conn.close()
 
         return False
-
+# ---------------------------------------
+# Login User
+# ---------------------------------------
 
 def login_user(email, password):
 
     conn = get_connection()
+
     cursor = conn.cursor()
 
     cursor.execute(
         """
-        SELECT id, name, password
+        SELECT id,name,password
         FROM users
         WHERE email=?
         """,
@@ -95,19 +69,24 @@ def login_user(email, password):
 
     conn.close()
 
-    if not user:
+    if user is None:
+
         return None
 
-    user_id, name, hashed = user
+    user_id, name, hashed_password = user
 
-    if verify_password(password, hashed):
+    if verify_password(password, hashed_password):
 
         return {
+
             "id": user_id,
+
             "name": name
+
         }
 
     return None
+
 # ---------------------------------------
 # Transactions
 # ---------------------------------------
@@ -122,6 +101,7 @@ def add_transaction(
 ):
 
     conn = get_connection()
+
     cursor = conn.cursor()
 
     cursor.execute(
@@ -134,7 +114,7 @@ def add_transaction(
             amount,
             description
         )
-        VALUES (?, ?, ?, ?, ?, ?)
+        VALUES(?,?,?,?,?,?)
         """,
         (
             user_id,
@@ -147,8 +127,8 @@ def add_transaction(
     )
 
     conn.commit()
-    conn.close()
 
+    conn.close()
 
 def load_transactions(user_id):
 
@@ -167,12 +147,37 @@ def load_transactions(user_id):
 
     conn.close()
 
-    return df
+    return df  
 
+def delete_transaction(
+    transaction_id,
+    user_id
+):
+
+    conn = get_connection()
+
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        DELETE FROM transactions
+        WHERE id=?
+        AND user_id=?
+        """,
+        (
+            transaction_id,
+            user_id
+        )
+    )
+
+    conn.commit()
+
+    conn.close()
 
 def get_transaction(transaction_id, user_id):
 
     conn = get_connection()
+
     cursor = conn.cursor()
 
     cursor.execute(
@@ -200,7 +205,6 @@ def get_transaction(transaction_id, user_id):
 
     return row
 
-
 def update_transaction(
     transaction_id,
     user_id,
@@ -212,6 +216,7 @@ def update_transaction(
 ):
 
     conn = get_connection()
+
     cursor = conn.cursor()
 
     cursor.execute(
@@ -223,8 +228,10 @@ def update_transaction(
             category=?,
             amount=?,
             description=?
-        WHERE id=?
-        AND user_id=?
+        WHERE
+            id=?
+        AND
+            user_id=?
         """,
         (
             date,
@@ -238,35 +245,20 @@ def update_transaction(
     )
 
     conn.commit()
+
     conn.close()
 
 
-def delete_transaction(transaction_id, user_id):
-
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute(
-        """
-        DELETE FROM transactions
-        WHERE id=?
-        AND user_id=?
-        """,
-        (
-            transaction_id,
-            user_id
-        )
-    )
-
-    conn.commit()
-    conn.close()
-
+# ---------------------------------------
+# Transaction Summary
+# ---------------------------------------
 
 def transaction_summary(user_id):
 
     df = load_transactions(user_id)
 
     if df.empty:
+
         return {
             "income": 0,
             "expense": 0,
@@ -275,23 +267,28 @@ def transaction_summary(user_id):
         }
 
     income = df[df["type"] == "Income"]["amount"].sum()
+
     expense = df[df["type"] == "Expense"]["amount"].sum()
 
     return {
+
         "income": income,
+
         "expense": expense,
+
         "balance": income - expense,
+
         "count": len(df)
+
     }
-# ---------------------------------------
-# Dashboard
-# ---------------------------------------
+
 
 def get_dashboard_summary(user_id):
 
     df = load_transactions(user_id)
 
     if df.empty:
+
         return {
             "income": 0,
             "expense": 0,
@@ -300,16 +297,19 @@ def get_dashboard_summary(user_id):
         }
 
     income = df[df["type"] == "Income"]["amount"].sum()
+
     expense = df[df["type"] == "Expense"]["amount"].sum()
 
     return {
+
         "income": income,
+
         "expense": expense,
+
         "balance": income - expense,
+
         "transactions": len(df)
-    }
-
-
+        }
 def expense_trend(user_id):
 
     df = load_transactions(user_id)
@@ -317,17 +317,15 @@ def expense_trend(user_id):
     expense = df[df["type"] == "Expense"]
 
     if expense.empty:
-        return pd.DataFrame()
 
-    trend = (
+        return expense
+
+    return (
         expense
-        .groupby("date", as_index=False)["amount"]
+        .groupby("date")["amount"]
         .sum()
+        .reset_index()
     )
-
-    return trend
-
-
 def expense_categories(user_id):
 
     df = load_transactions(user_id)
@@ -335,22 +333,21 @@ def expense_categories(user_id):
     expense = df[df["type"] == "Expense"]
 
     if expense.empty:
-        return pd.DataFrame()
 
-    categories = (
+        return expense
+
+    return (
         expense
-        .groupby("category", as_index=False)["amount"]
+        .groupby("category")["amount"]
         .sum()
+        .reset_index()
     )
-
-    return categories
-
-
 def recent_transactions(user_id, limit=5):
 
     df = load_transactions(user_id)
 
     return df.head(limit)
+
 # ---------------------------------------
 # Budget
 # ---------------------------------------
@@ -358,6 +355,7 @@ def recent_transactions(user_id, limit=5):
 def load_budget(user_id):
 
     conn = get_connection()
+
     cursor = conn.cursor()
 
     cursor.execute(
@@ -374,23 +372,29 @@ def load_budget(user_id):
     conn.close()
 
     if row:
+
         return row[0]
 
     return 0
-
-
-def save_budget(user_id, amount):
+def save_budget(
+    user_id,
+    amount
+):
 
     conn = get_connection()
+
     cursor = conn.cursor()
 
     cursor.execute(
         """
-        INSERT INTO budget(user_id, monthly_budget)
-        VALUES(?, ?)
+        INSERT INTO budget(
+            user_id,
+            monthly_budget
+        )
+        VALUES(?,?)
         ON CONFLICT(user_id)
         DO UPDATE SET
-            monthly_budget = excluded.monthly_budget
+            monthly_budget=excluded.monthly_budget
         """,
         (
             user_id,
@@ -399,23 +403,19 @@ def save_budget(user_id, amount):
     )
 
     conn.commit()
+
     conn.close()
-
-
 def budget_summary(user_id):
 
     budget = load_budget(user_id)
 
     df = load_transactions(user_id)
 
-    expense = df[df["type"] == "Expense"]["amount"].sum()
+    expense = df[
+        df["type"] == "Expense"
+    ]["amount"].sum()
 
     remaining = budget - expense
-
-    progress = 0
-
-    if budget > 0:
-        progress = min(expense / budget, 1.0)
 
     return {
 
@@ -423,9 +423,7 @@ def budget_summary(user_id):
 
         "expense": expense,
 
-        "remaining": remaining,
-
-        "progress": progress
+        "remaining": remaining
 
     }
 # ---------------------------------------
@@ -435,6 +433,7 @@ def budget_summary(user_id):
 def load_goal(user_id):
 
     conn = get_connection()
+
     cursor = conn.cursor()
 
     cursor.execute(
@@ -456,23 +455,15 @@ def load_goal(user_id):
     if row:
 
         return {
-
             "goal_name": row[0],
-
             "target_amount": row[1],
-
             "current_amount": row[2]
-
         }
 
     return {
-
         "goal_name": "",
-
         "target_amount": 0,
-
         "current_amount": 0
-
     }
 
 
@@ -484,6 +475,7 @@ def save_goal(
 ):
 
     conn = get_connection()
+
     cursor = conn.cursor()
 
     cursor.execute(
@@ -497,11 +489,8 @@ def save_goal(
         VALUES(?,?,?,?)
         ON CONFLICT(user_id)
         DO UPDATE SET
-
             goal_name=excluded.goal_name,
-
             target_amount=excluded.target_amount,
-
             current_amount=excluded.current_amount
         """,
         (
@@ -513,6 +502,7 @@ def save_goal(
     )
 
     conn.commit()
+
     conn.close()
 
 
@@ -521,8 +511,7 @@ def goal_summary(user_id):
     goal = load_goal(user_id)
 
     remaining = max(
-        goal["target_amount"] -
-        goal["current_amount"],
+        goal["target_amount"] - goal["current_amount"],
         0
     )
 
@@ -530,21 +519,49 @@ def goal_summary(user_id):
 
     if goal["target_amount"] > 0:
 
-        progress = min(
-            goal["current_amount"] /
-            goal["target_amount"],
-            1.0
-        )
+        progress = goal["current_amount"] / goal["target_amount"]
 
     return {
 
-        **goal,
+        "goal_name": goal["goal_name"],
+
+        "target_amount": goal["target_amount"],
+
+        "current_amount": goal["current_amount"],
 
         "remaining": remaining,
 
-        "progress": progress
+        "progress": min(progress, 1.0)
 
     }
+# ---------------------------------------
+# Categories
+# ---------------------------------------
+
+def load_categories(user_id):
+
+    conn = get_connection()
+
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT name
+        FROM categories
+        WHERE user_id=?
+        ORDER BY name
+        """,
+        (user_id,)
+    )
+
+    categories = [
+        row[0]
+        for row in cursor.fetchall()
+    ]
+
+    conn.close()
+
+    return categories
 # ---------------------------------------
 # Categories
 # ---------------------------------------
@@ -569,6 +586,40 @@ def load_categories(user_id):
     conn.close()
 
     return categories
+
+
+def create_default_categories(user_id):
+
+    default_categories = [
+        "Food",
+        "Transport",
+        "Shopping",
+        "Entertainment",
+        "Bills",
+        "Healthcare",
+        "Education",
+        "Salary",
+        "Freelance",
+        "Investment",
+        "Other"
+    ]
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.executemany(
+        """
+        INSERT OR IGNORE INTO categories(user_id, name)
+        VALUES(?, ?)
+        """,
+        [
+            (user_id, category)
+            for category in default_categories
+        ]
+    )
+
+    conn.commit()
+    conn.close()
 
 
 def add_category(user_id, category_name):
@@ -621,99 +672,29 @@ def delete_category(user_id, category_name):
 
     conn.commit()
     conn.close()
-
-# ---------------------------------------
-# Profile
-# ---------------------------------------
-
-def get_user(user_id):
+def delete_category(
+    user_id,
+    category_name
+):
 
     conn = get_connection()
+
     cursor = conn.cursor()
 
     cursor.execute(
         """
-        SELECT
-            id,
-            name,
-            email,
-            created_at
-        FROM users
-        WHERE id=?
-        """,
-        (user_id,)
-    )
-
-    user = cursor.fetchone()
-
-    conn.close()
-
-    return user
-
-def update_user_name(user_id, new_name):
-
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute(
-        """
-        UPDATE users
-        SET name=?
-        WHERE id=?
+        DELETE FROM categories
+        WHERE
+            user_id=?
+        AND
+            name=?
         """,
         (
-            new_name.strip(),
-            user_id
+            user_id,
+            category_name
         )
     )
 
     conn.commit()
-    conn.close()
 
-# ---------------------------------------
-# Change Password
-# ---------------------------------------
-
-def verify_current_password(user_id, password):
-
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute(
-        """
-        SELECT password
-        FROM users
-        WHERE id=?
-        """,
-        (user_id,)
-    )
-
-    row = cursor.fetchone()
-
-    conn.close()
-
-    if not row:
-        return False
-
-    return verify_password(password, row[0])
-
-
-def update_password(user_id, new_password):
-
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute(
-        """
-        UPDATE users
-        SET password=?
-        WHERE id=?
-        """,
-        (
-            hash_password(new_password),
-            user_id
-        )
-    )
-
-    conn.commit()
     conn.close()
